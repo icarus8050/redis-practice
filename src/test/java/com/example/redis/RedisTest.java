@@ -3,6 +3,8 @@ package com.example.redis;
 import com.example.redis.entity.Member;
 import com.example.redis.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,17 @@ public class RedisTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @AfterEach
+    public void tearDown() throws Exception {
+        memberRepository.deleteAll();
+    }
+
     @Test
     public void registrationAndQueryTest() {
         //given
-        Long idx = 2L;
+        Long idx = 1L;
         LocalDateTime refreshTime = LocalDateTime.of(2019, 12, 4, 0, 0);
-        String name = "leafy";
+        String name = "icarus";
 
         Member member = Member.builder()
                 .idx(idx)
