@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -52,16 +53,27 @@ public class RedisTest {
     }
 
     @Test
-    public void findTest() {
+    public void modifyTest() {
         //given
         Long idx = 1L;
+        LocalDateTime refreshTime = LocalDateTime.of(2019, 11, 4, 0, 0);
+        String name = "icarus";
+
+        memberRepository.save(Member.builder()
+                .idx(idx)
+                .name(name)
+                .refreshTime(refreshTime)
+                .build());
 
         //when
-        Member foundMember = memberRepository.findById(idx).get();
+        Member savedMember = memberRepository.findById(idx).get();
+        savedMember.refresh("leafy", LocalDateTime.of(2019, 11, 5, 0, 0));
+        memberRepository.save(savedMember);
+
 
         //then
-        log.info(foundMember.getIdx().toString());
-        log.info(foundMember.getName());
-        log.info(foundMember.getRefreshTime().toString());
+        log.info(savedMember.getIdx().toString());
+        log.info(savedMember.getName());
+        log.info(savedMember.getRefreshTime().toString());
     }
 }
