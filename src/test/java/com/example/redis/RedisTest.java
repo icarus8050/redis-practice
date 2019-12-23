@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -24,8 +26,11 @@ public class RedisTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     @AfterEach
-    public void tearDown() throws Exception {
+    public void reset() {
         memberRepository.deleteAll();
     }
 
@@ -75,5 +80,12 @@ public class RedisTest {
         log.info(savedMember.getIdx().toString());
         log.info(savedMember.getName());
         log.info(savedMember.getRefreshTime().toString());
+    }
+
+    @Test
+    public void stringRedisTest() {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set("name", "icarus");
+        values.set("age", "26");
     }
 }
